@@ -1,2 +1,5 @@
-package com.tunadag.repositories.entity.enums;public class State {
+package com.tunadag.repositories.entity.enums;
+
+public enum State {
+    ACTIVE, DELETED
 }

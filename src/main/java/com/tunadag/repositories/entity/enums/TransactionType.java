@@ -1,2 +1,6 @@
-package com.tunadag.repositories.entity.enums;public enum TransactionType {
+package com.tunadag.repositories.entity.enums;
+
+public enum TransactionType {
+    INCOME,
+    EXPENSE
 }

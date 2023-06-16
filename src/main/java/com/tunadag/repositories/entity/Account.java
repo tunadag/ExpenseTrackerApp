@@ -1,11 +1,13 @@
-package com.tunadag.repository.entity;
+package com.tunadag.repositories.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tunadag.repositories.entity.base.BaseEntity;
+import com.tunadag.repositories.entity.enums.Currency;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 import java.util.List;
 
 @Data
@@ -14,22 +16,32 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "tbl_accounts")
-public class Account {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Account extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String currency;
+    private Currency currency;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Transaction> transactions;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private double balance = 0.0;
+    @Override
+    public String toString() {
+        return "Account{" +
+                ", name='" + name + '\'' +
+                ", currency=" + currency +
+                '}';
+    }
 }
