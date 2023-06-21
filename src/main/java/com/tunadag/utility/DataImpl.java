@@ -27,6 +27,8 @@ public class DataImpl {
     private final AccountService accountService;
     private final TransactionService transactionService;
 
+
+
     @PostConstruct
     public void loadData() {
         createUsers();

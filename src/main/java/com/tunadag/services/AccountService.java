@@ -3,14 +3,11 @@ package com.tunadag.services;
 import com.tunadag.dto.request.AccountCreateRequestDto;
 import com.tunadag.dto.request.AccountUpdateRequestDto;
 import com.tunadag.exceptions.custom.AccountNotFoundException;
-import com.tunadag.exceptions.custom.TransactionNotFoundException;
 import com.tunadag.repositories.AccountRepository;
-import com.tunadag.repositories.TransactionRepository;
 import com.tunadag.repositories.entity.Account;
 import com.tunadag.repositories.entity.Transaction;
 import com.tunadag.repositories.entity.User;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,13 +18,10 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final UserService userService;
-    private final TransactionRepository transactionRepository;
 
-    public AccountService(AccountRepository accountRepository, UserService userService,
-                          @Qualifier("transactionRepository") TransactionRepository transactionRepository) {
+    public AccountService(AccountRepository accountRepository, UserService userService) {
         this.accountRepository = accountRepository;
         this.userService = userService;
-        this.transactionRepository = transactionRepository;
     }
 
     public List<Account> getUserAccounts() {
@@ -65,18 +59,12 @@ public class AccountService {
     public Boolean delete(Long accountId) {
         User user = userService.getCurrentUser();
 
-        Optional<Account> accountOptional = accountRepository.findActiveByOidAndUser(accountId, user);
-        if (accountOptional.isEmpty()) {
+        Optional<Account> accountToDelete = accountRepository.findActiveByOidAndUser(accountId, user);
+        if (accountToDelete.isEmpty()) {
             throw new AccountNotFoundException("Account not found or user is not authorized");
         }
 
-        Account account = accountOptional.get();
-        Optional<Transaction> transactionOptional = transactionRepository.findActiveByOidAndAccount(accountId, account);
-        if (transactionOptional.isEmpty()) {
-            throw new TransactionNotFoundException("Transaction not found or user is not authorized");
-        }
-        Transaction transaction = transactionOptional.get();
-        transactionRepository.softDeleteById(transaction.getOid());
+        accountRepository.softDeleteById(accountId);
         return true;
     }
 

@@ -117,8 +117,12 @@ public class TransactionService {
                     return transactionDate.equals(startDateAsDate) || transactionDate.equals(endDateAsDate)
                             || (transactionDate.after(startDateAsDate) && transactionDate.before(endDateAsDate));
                 })
-                .filter(transaction -> transaction.getCategory().contains(query)
-                        || String.valueOf(transaction.getAmount()).contains(query))
+                .filter(transaction -> {
+                    // Belirli bir sorgu kelimesi içeren veya belirli bir miktara sahip transactionları seç
+                    boolean matchesCategory = transaction.getCategory().contains(query);
+                    boolean matchesAmount = String.valueOf(transaction.getAmount()).contains(query);
+                    return matchesCategory || matchesAmount;
+                })
                 .collect(Collectors.toList());
 
         return filteredTransactions;

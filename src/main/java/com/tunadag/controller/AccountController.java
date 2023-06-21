@@ -29,7 +29,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/transactions")
-    @Operation(summary = "Kullaınıcının belirli bir hesabına ait tüm işlemler görüntülenir.")
+    @Operation(summary = "Kullanıcının belirli bir hesabına ait tüm işlemler görüntülenir.")
     public List<Transaction> getAccountTransactions(@PathVariable Long accountId) {
         return accountService.getAccountTransactions(accountId);
     }
